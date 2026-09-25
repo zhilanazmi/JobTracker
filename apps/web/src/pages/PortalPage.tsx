@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { Globe, Plus, ExternalLink, Pencil, Trash2 } from "lucide-react";
-import { Button, Input, Textarea, Field, Card, Chip } from "@/components/ui";
+import { Button, Input, Textarea, Field, Card, Chip, Select } from "@/components/ui";
 import { api } from "@/lib/api";
 
 /**
@@ -30,7 +30,13 @@ export function PortalPage() {
   const [params, setParams] = useSearchParams();
   const view = params.get("view") ?? "cards";
   const tipe = params.get("tipe") ?? "";
-  const { data, isLoading } = usePortals(tipe);
+  const fokus = params.get("fokus") ?? "";
+  // Query tanpa filter: sumber daftar tipe/fokus + total portal terdaftar.
+  const all = usePortals();
+  // Query terfilter server-side (?tipe= & ?fokus=): daftar yang ditampilkan.
+  const list = usePortals({ tipe, fokus });
+  const items = list.data?.items ?? [];
+  const isLoading = all.isLoading || list.isPending;
   const [editing, setEditing] = useState<Portal | null>(null);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<Portal | null>(null);
@@ -42,7 +48,16 @@ export function PortalPage() {
     setParams(p, { replace: true });
   };
 
-  const tipeList = Array.from(new Set((data?.items ?? []).map((p) => p.tipe).filter(Boolean))) as string[];
+  const resetFilter = () => {
+    const p = new URLSearchParams(params);
+    p.delete("tipe");
+    p.delete("fokus");
+    setParams(p, { replace: true });
+  };
+
+  const tipeList = Array.from(new Set((all.data?.items ?? []).map((p) => p.tipe).filter(Boolean))) as string[];
+  const fokusList = Array.from(new Set((all.data?.items ?? []).map((p) => p.fokus).filter(Boolean))) as string[];
+  const hasFilter = Boolean(tipe || fokus);
 
   return (
     <div className="flex flex-col gap-gap">
@@ -51,7 +66,11 @@ export function PortalPage() {
         <p className="flex-1 text-[15px] font-semibold text-success-text">
           Semua portal di bawah legit &amp; banyak dipakai di Indonesia
         </p>
-        <span className="text-[13px] text-text-secondary whitespace-nowrap">Total: {data?.pagination.total ?? 0} portal</span>
+        <span className="whitespace-nowrap text-[13px] text-text-secondary">
+          {hasFilter
+            ? `Menampilkan ${items.length} dari ${all.data?.pagination.total ?? 0} portal`
+            : `Total: ${all.data?.pagination.total ?? 0} portal`}
+        </span>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -80,6 +99,10 @@ export function PortalPage() {
             </button>
           ))}
         </div>
+        <Select value={fokus} onChange={(e) => setParam("fokus", e.target.value)} className="!w-52" aria-label="Filter fokus">
+          <option value="">Semua fokus</option>
+          {fokusList.map((f) => <option key={f} value={f}>{f}</option>)}
+        </Select>
         <div className="ml-auto">
           <Button size="sm" onClick={() => setCreating(true)}><Plus size={15} aria-hidden /> Tambah Portal</Button>
         </div>
@@ -89,11 +112,13 @@ export function PortalPage() {
         <div className="grid grid-cols-1 gap-gap sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-44 animate-pulse rounded-lg bg-surface shadow-clay-md" />)}
         </div>
+      ) : items.length === 0 ? (
+        <EmptyPortal hasFilter={hasFilter} onReset={resetFilter} />
       ) : view === "table" ? (
-        <PortalTable items={data?.items ?? []} onEdit={setEditing} onDelete={setDeleting} />
+        <PortalTable items={items} onEdit={setEditing} onDelete={setDeleting} />
       ) : (
         <div className="grid grid-cols-1 gap-gap sm:grid-cols-2 xl:grid-cols-3">
-          {(data?.items ?? []).map((p) => (
+          {items.map((p) => (
             <PortalCard key={p.id} portal={p} onEdit={setEditing} onDelete={setDeleting} />
           ))}
         </div>
@@ -111,9 +136,16 @@ export function PortalPage() {
   );
 }
 
-function usePortals(tipe: string) {
-  const qs = tipe ? `tipe=${encodeURIComponent(tipe)}&take=100` : "take=100";
-  return useQuery({ queryKey: ["portals", qs], queryFn: () => api.get<Paginated<Portal>>(`/api/portals?${qs}`) });
+function usePortals(filter?: { tipe?: string; fokus?: string }) {
+  const qs = new URLSearchParams({ take: "100" });
+  if (filter?.tipe) qs.set("tipe", filter.tipe);
+  if (filter?.fokus) qs.set("fokus", filter.fokus);
+  const s = qs.toString();
+  return useQuery({
+    queryKey: ["portals", s],
+    queryFn: () => api.get<Paginated<Portal>>(`/api/portals?${s}`),
+    placeholderData: keepPreviousData,
+  });
 }
 
 const INITIALS_COLORS = ["bg-accent-soft text-accent", "bg-info-soft text-info-text", "bg-success-soft text-success-text", "bg-warning-soft text-warning-text", "bg-danger-soft text-danger-text"];
@@ -270,5 +302,26 @@ function DeletePortalConfirm({ portal, onClose }: { portal: Portal; onClose: () 
         </div>
       </Card>
     </div>
+  );
+}
+
+function EmptyPortal({ hasFilter, onReset }: { hasFilter: boolean; onReset: () => void }) {
+  return (
+    <Card className="flex flex-col items-center gap-2 py-14 text-center">
+      <Globe size={28} className="text-text-muted" aria-hidden />
+      <p className="text-[15px] font-bold">
+        {hasFilter ? "Tidak ada portal yang cocok dengan filter" : "Belum ada portal"}
+      </p>
+      <p className="max-w-md text-[13px] text-text-secondary">
+        {hasFilter
+          ? "Coba ubah tipe atau fokus, atau reset filter untuk melihat semua portal."
+          : "Klik Tambah Portal untuk mendaftarkan portal job pertamamu."}
+      </p>
+      {hasFilter && (
+        <Button variant="ghost" size="sm" className="mt-2" onClick={onReset}>
+          Reset Filter
+        </Button>
+      )}
+    </Card>
   );
 }

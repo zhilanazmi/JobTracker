@@ -19,6 +19,8 @@ interface ResourceDef {
   fields: Record<string, "string" | "date" | "money" | "int" | "bigintRef" | "raw">;
   softDelete?: boolean;
   search?: string[];
+  /** Kolom string exact-match yang boleh difilter via query param, mis. ?tipe=Umum. */
+  filters?: string[];
 }
 
 function toDb(d: any, fields: ResourceDef["fields"]): Record<string, unknown> {
@@ -54,6 +56,10 @@ function makeResource(name: string, def: ResourceDef): Hono {
     const q = c.req.query("q");
     const where: Record<string, unknown> = {};
     if (def.softDelete) where.deletedAt = null;
+    for (const f of def.filters ?? []) {
+      const v = c.req.query(f);
+      if (v) where[f] = v;
+    }
     if (q && def.search) {
       where.OR = def.search.map((f) => ({ [f]: { contains: q } }));
     }
@@ -118,6 +124,7 @@ export function registerResources(app: Hono): void {
     schemaPartial: portalSchema.partial(),
     fields: { namaPortal: "string", fokus: "string", tipe: "string", link: "string", cocokUntuk: "string", catatan: "string" },
     search: ["namaPortal", "fokus"],
+    filters: ["tipe", "fokus"],
   }));
 
   app.route("/api/documents", makeResource("documents", {
