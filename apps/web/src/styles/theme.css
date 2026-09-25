@@ -1,0 +1,112 @@
+/*
+ * theme.css — token dari design/job-manager.pen (DESIGN_INVENTORY.md).
+ * ATURAN: 0 nilai arbitrary di kode aplikasi. Semua lewat token ini.
+ * Dark mode: [data-theme="dark"] (set di <html>).
+ */
+
+@import "tailwindcss";
+
+@theme {
+  /* Font (prompt §2: Nunito self-host, fallback Quicksand tidak di-host) */
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  /* Light values default */
+  --color-canvas: #f4f0fa;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #ede7f8;
+  --color-text-primary: #2e2a3b;
+  --color-text-secondary: #5a5370;
+  --color-text-muted: #6b6480;
+  --color-accent: #7c6aa8;
+  --color-accent-soft: #e4dcf5;
+  --color-accent-secondary: #f2a98c;
+  --color-accent-tertiary: #86c5b4;
+  --color-success: #7fbf8a;
+  --color-success-soft: #dff0e2;
+  --color-success-text: #2f6b3f;
+  --color-warning: #f2c572;
+  --color-warning-soft: #fbefd6;
+  --color-warning-text: #8a6410;
+  --color-danger: #e98b8b;
+  --color-danger-soft: #fadede;
+  --color-danger-text: #9b3b3b;
+  --color-info: #8fb3e0;
+  --color-info-soft: #dee9f7;
+  --color-info-text: #2e5a96;
+  --color-neutral: #b4aec4;
+  --color-neutral-soft: #ebe8f2;
+  --color-neutral-text: #5c5570;
+
+  /* Shadow warna (light) */
+  --color-shadow-outer-1: #7c6aa838;
+  --color-shadow-outer-2: #7c6aa824;
+  --color-shadow-inner-dark: #8b7ab82e;
+  --color-shadow-highlight: #ffffffd9;
+
+  /* Radius (tidak ada sudut < 14px di seluruh app) */
+  --radius-sm: 14px;
+  --radius-md: 22px;
+  --radius-lg: 32px;
+  --radius-xl: 44px;
+  --radius-pill: 999px;
+
+  /* Spacing dari token .pen */
+  --spacing-card: 24px;
+  --spacing-gap: 20px;
+  --spacing-page: 32px;
+
+  /* Shadow clay — komposisi dari effect node .pen (DECISIONS.md D3) */
+  --shadow-clay-sm:
+    0 7.2px 14.4px -3.6px var(--color-shadow-outer-1),
+    0 2.4px 4.8px -2.4px var(--color-shadow-outer-2),
+    inset 0 -3.6px 7.2px var(--color-shadow-inner-dark),
+    inset 0 3.6px 6px var(--color-shadow-highlight);
+  --shadow-clay-md:
+    0 12px 24px -6px var(--color-shadow-outer-1),
+    0 4px 8px -4px var(--color-shadow-outer-2),
+    inset 0 -6px 12px var(--color-shadow-inner-dark),
+    inset 0 6px 10px var(--color-shadow-highlight);
+  --shadow-clay-lg:
+    0 19.2px 38.4px -9.6px var(--color-shadow-outer-1),
+    0 6.4px 12.8px -6.4px var(--color-shadow-outer-2),
+    inset 0 -9.6px 19.2px var(--color-shadow-inner-dark),
+    inset 0 9.6px 16px var(--color-shadow-highlight);
+  --shadow-clay-pressed:
+    inset 0 -6px 12px var(--color-shadow-inner-dark),
+    inset 0 6px 10px var(--color-shadow-highlight);
+}
+
+/* ===== Dark mode: nilai token .pen tema gelap ===== */
+[data-theme="dark"] {
+  --color-canvas: #201c2b;
+  --color-surface: #2b2639;
+  --color-surface-sunken: #231f30;
+  --color-text-primary: #f0edf7;
+  --color-text-secondary: #b6b0c6;
+  --color-text-muted: #9a93ac;
+  --color-accent: #a48fd0;
+  --color-accent-soft: #39335a;
+  /* accent-secondary/tertiary & status*tanpa-suffix tetap sama (lihat inventory) */
+  --color-success: #8fd09a;
+  --color-success-soft: #2a3b2e;
+  --color-success-text: #a7dcb0;
+  --color-warning-soft: #413522;
+  --color-warning-text: #f0ce8e;
+  --color-danger-soft: #442a2e;
+  --color-danger-text: #f0a8a8;
+  --color-info-soft: #25334a;
+  --color-info-text: #a9c6ec;
+  --color-neutral-soft: #332e42;
+  --color-neutral-text: #c4bed2;
+
+  --color-shadow-outer-1: #00000073;
+  --color-shadow-outer-2: #00000047;
+  --color-shadow-inner-dark: #00000066;
+  --color-shadow-highlight: #ffffff1a;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}

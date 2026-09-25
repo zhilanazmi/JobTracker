@@ -1,0 +1,254 @@
+{
+  "main": {
+    "id": "0432edb9f763ace3",
+    "type": "split",
+    "children": [
+      {
+        "id": "fbd56618a8bea8de",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8ab9a72270c8d2c7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Prompt Desain Job Application Manager Claymorphism di Pencildev.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Prompt Desain Job Application Manager Claymorphism di Pencildev"
+            }
+          },
+          {
+            "id": "1e08199fb4a2fad2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Prompt Final Claude Code - Job Application Manager.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Prompt Final Claude Code - Job Application Manager"
+            }
+          },
+          {
+            "id": "6f08a301eb4ac369",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/PRD.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "PRD"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d2ec7f422c2e9fc1",
+    "type": "split",
+    "children": [
+      {
+        "id": "88af4f9b659a53d3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "73d898faee5a3e06",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "d43b8e3204c36dea",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "0c9384f62378224d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "b84647e14809128e",
+    "type": "split",
+    "children": [
+      {
+        "id": "66800fc25ef7ed93",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e1cf1dd38ac311c3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Prompt Final Claude Code - Job Application Manager.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "0356f7a8b95ca008",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Prompt Final Claude Code - Job Application Manager.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "bd7d9ddc42be6210",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "e200ae103275d975",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "3b088e24db594043",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Prompt Final Claude Code - Job Application Manager.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "6f08a301eb4ac369",
+  "lastOpenFiles": [
+    "docs/screenshots/auth-login-after-logout.png",
+    "apps/web/logout-test.mjs",
+    "apps/web/dist/assets/external-link-C57rCoUm.js",
+    "apps/web/dist/assets/trash-2-BfDE3fmM.js",
+    "apps/web/dist/assets/CrudTable-CE6eUxJs.js",
+    "apps/web/dist/assets/SalaryPage-C-Hpv2Uf.js",
+    "apps/web/dist/assets/InterviewPage-DKjK7j4P.js",
+    "apps/web/dist/assets/UpskillPage-D1o1k89y.js",
+    "apps/web/dist/assets/ContactsPage-DTRg2Ofp.js",
+    "apps/web/dist/assets/DocumentsPage-CSf25sbj.js",
+    "apps/web/dist/assets/PortalPage-BIB06D56.js",
+    "docs/screenshots/auth-after-register.png",
+    "docs/screenshots/auth-login-dark.png",
+    "docs/screenshots/auth-login-light.png",
+    "CLAUDE.md",
+    "README.md",
+    "docs/screenshots/upskill-dark.png",
+    "docs/screenshots/upskill-light.png",
+    "docs/screenshots/offer-light.png",
+    "docs/screenshots/offer-dark.png",
+    "docs/screenshots/kontak-light.png",
+    "docs/screenshots/kontak-dark.png",
+    "docs/screenshots/interview-latihan-light.png",
+    "docs/DECISIONS.md",
+    "docs/API.md",
+    "docs/PRD.md",
+    "docs/DESIGN_INVENTORY.md",
+    "Prompt Final Claude Code - Job Application Manager.md",
+    "Sebelum prompt (buat saya pribadi).md",
+    "Spesifikasi Detail 11 Screen (Claymorphism).md",
+    "Prompt Desain Job Application Manager Claymorphism di Pencildev.md"
+  ]
+}

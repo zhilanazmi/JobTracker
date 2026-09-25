@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Konvensi (prompt §4): id BigInt autoincrement; tabel user-scoped punya
+// userId FK cascade + isSample; snake_case di MySQL via @map/@@map;
+// uang Decimal(15,2); tanggal murni @db.Date; status String(50) bukan enum;
+// soft delete deletedAt untuk job_applications, contacts, documents.
+// Tidak ada kolom hasil hitungan.
+
+model User {
+  id            BigInt              @id @default(autoincrement())
+  email         String              @unique @db.VarChar(255)
+  passwordHash  String              @db.VarChar(255) @map("password_hash")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+  refreshTokens RefreshToken[]
+  profile       Profile?
+  optionLists   OptionList[]
+  portals       JobPortal[]
+  applications  JobApplication[]
+  documents     Document[]
+  contacts      Contact[]
+  upskills      Upskill[]
+  questions     InterviewQuestion[]
+  salaries      SalaryBenchmark[]
+  offers        JobOffer[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt   @map("user_id")
+  tokenHash String   @unique @db.VarChar(255) @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+model Profile {
+  id                     BigInt    @id @default(autoincrement())
+  userId                 BigInt    @unique @map("user_id")
+  nama                   String    @db.VarChar(100)
+  targetPosisi           String?   @db.VarChar(150) @map("target_posisi")
+  targetIndustri         String?   @db.VarChar(150) @map("target_industri")
+  lokasiPreferensi       String?   @db.VarChar(150) @map("lokasi_preferensi")
+  ekspektasiGajiBawah    Decimal?  @db.Decimal(15, 2) @map("ekspektasi_gaji_bawah")
+  ekspektasiGajiAtas     Decimal?  @db.Decimal(15, 2) @map("ekspektasi_gaji_atas")
+  linkedin               String?   @db.VarChar(500)
+  email                  String?   @db.VarChar(255)
+  noHp                   String?   @db.VarChar(50) @map("no_hp")
+  targetLamaranPerMinggu Int       @default(10) @map("target_lamaran_per_minggu")
+  targetDapatKerja       DateTime? @db.Date @map("target_dapat_kerja")
+  statusPencarian        String    @default("Aktif") @db.VarChar(50) @map("status_pencarian")
+  offerWeights           Json      @default("{\"gaji\":0,\"wlb\":34,\"jenjang\":33,\"budaya\":33}") @map("offer_weights")
+  onboardingSteps        Json      @default("[]") @map("onboarding_steps")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model OptionList {
+  id         BigInt   @id @default(autoincrement())
+  userId     BigInt   @map("user_id")
+  tipe       String   @db.VarChar(20)
+  label      String   @db.VarChar(50)
+  urutan     Int      @default(0)
+  warnaToken String   @db.VarChar(20) @map("warna_token")
+  isTerminal Boolean  @default(false) @map("is_terminal")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tipe, label])
+  @@map("option_lists")
+}
+
+model JobPortal {
+  id         BigInt   @id @default(autoincrement())
+  userId     BigInt   @map("user_id")
+  namaPortal String   @db.VarChar(100) @map("nama_portal")
+  fokus      String?  @db.VarChar(100)
+  tipe       String?  @db.VarChar(50)
+  link       String?  @db.VarChar(500)
+  cocokUntuk String?  @db.VarChar(255) @map("cocok_untuk")
+  catatan    String?  @db.Text
+  isSample   Boolean  @default(false) @map("is_sample")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications JobApplication[]
+
+  @@index([userId])
+  @@map("job_portals")
+}
+
+model JobApplication {
+  id              BigInt    @id @default(autoincrement())
+  userId          BigInt    @map("user_id")
+  tglApply        DateTime? @db.Date @map("tgl_apply")
+  perusahaan      String    @db.VarChar(150)
+  posisi          String    @db.VarChar(150)
+  portalId        BigInt?   @map("portal_id")
+  tipeKerja       String?   @db.VarChar(50) @map("tipe_kerja")
+  modeKerja       String?   @db.VarChar(50) @map("mode_kerja")
+  lokasi          String?   @db.VarChar(150)
+  estGajiBawah    Decimal?  @db.Decimal(15, 2) @map("est_gaji_bawah")
+  estGajiAtas     Decimal?  @db.Decimal(15, 2) @map("est_gaji_atas")
+  estGajiTeks     String?   @db.VarChar(100) @map("est_gaji_teks")
+  status          String    @db.VarChar(50)
+  prioritas       String?   @db.VarChar(50)
+  deadline        DateTime? @db.Date
+  tglInterview    DateTime? @db.Date @map("tgl_interview")
+  nextAction      String?   @db.VarChar(255) @map("next_action")
+  linkLowongan    String?   @db.VarChar(500) @map("link_lowongan")
+  catatan         String?   @db.Text
+  statusChangedAt DateTime  @default(now()) @map("status_changed_at")
+  isSample        Boolean   @default(false) @map("is_sample")
+  deletedAt       DateTime? @map("deleted_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portal          JobPortal? @relation(fields: [portalId], references: [id], onDelete: SetNull)
+  statusLogs      ApplicationStatusLog[]
+  offers          JobOffer[]
+
+  @@index([userId, status])
+  @@index([userId, deadline])
+  @@index([userId, tglApply])
+  @@index([portalId])
+  @@map("job_applications")
+}
+
+model ApplicationStatusLog {
+  id               BigInt   @id @default(autoincrement())
+  jobApplicationId BigInt   @map("job_application_id")
+  statusLama       String?  @db.VarChar(50) @map("status_lama")
+  statusBaru       String   @db.VarChar(50) @map("status_baru")
+  changedAt        DateTime @default(now()) @map("changed_at")
+  application      JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+
+  @@index([jobApplicationId, changedAt])
+  @@map("application_status_logs")
+}
+
+model Document {
+  id             BigInt    @id @default(autoincrement())
+  userId         BigInt    @map("user_id")
+  namaDokumen    String    @db.VarChar(150) @map("nama_dokumen")
+  jenis          String?   @db.VarChar(50)
+  versi          String?   @db.VarChar(50)
+  linkDrive      String?   @db.VarChar(500) @map("link_drive")
+  updateTerakhir DateTime? @db.Date @map("update_terakhir")
+  status         String?   @db.VarChar(50)
+  catatan        String?   @db.Text
+  isSample       Boolean   @default(false) @map("is_sample")
+  deletedAt      DateTime? @map("deleted_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("documents")
+}
+
+model Contact {
+  id             BigInt    @id @default(autoincrement())
+  userId         BigInt    @map("user_id")
+  nama           String    @db.VarChar(100)
+  perusahaan     String?   @db.VarChar(150)
+  posisi         String?   @db.VarChar(150)
+  hubungan       String?   @db.VarChar(50)
+  kontak         String?   @db.VarChar(255)
+  kontakTerakhir DateTime? @db.Date @map("kontak_terakhir")
+  statusFollowUp String?   @db.VarChar(50) @map("status_follow_up")
+  catatan        String?   @db.Text
+  isSample       Boolean   @default(false) @map("is_sample")
+  deletedAt      DateTime? @map("deleted_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("contacts")
+}
+
+model Upskill {
+  id             BigInt    @id @default(autoincrement())
+  userId         BigInt    @map("user_id")
+  skill          String    @db.VarChar(150)
+  kategori       String?   @db.VarChar(50)
+  platform       String?   @db.VarChar(100)
+  linkCourse     String?   @db.VarChar(500) @map("link_course")
+  prioritas      String?   @db.VarChar(50)
+  status         String?   @db.VarChar(50)
+  targetSelesai  DateTime? @db.Date @map("target_selesai")
+  progress       Int       @default(0)
+  linkSertifikat String?   @db.VarChar(500) @map("link_sertifikat")
+  isSample       Boolean   @default(false) @map("is_sample")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("upskills")
+}
+
+model InterviewQuestion {
+  id              BigInt    @id @default(autoincrement())
+  userId          BigInt    @map("user_id")
+  pertanyaan      String    @db.Text
+  kategori        String?   @db.VarChar(50)
+  untukRole       String?   @db.VarChar(150) @map("untuk_role")
+  starSituation   String?   @db.Text @map("star_situation")
+  starTask        String?   @db.Text @map("star_task")
+  starAction      String?   @db.Text @map("star_action")
+  starResult      String?   @db.Text @map("star_result")
+  contohKonkret   String?   @db.Text @map("contoh_konkret")
+  prioritas       String?   @db.VarChar(50)
+  status          String?   @db.VarChar(50)
+  catatan         String?   @db.Text
+  terakhirDilatih DateTime? @map("terakhir_dilatih")
+  isSample        Boolean   @default(false) @map("is_sample")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("interview_questions")
+}
+
+model SalaryBenchmark {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt   @map("user_id")
+  role      String   @db.VarChar(150)
+  level     String?  @db.VarChar(50)
+  industri  String?  @db.VarChar(100)
+  lokasi    String?  @db.VarChar(100)
+  gajiBawah Decimal? @db.Decimal(15, 2) @map("gaji_bawah")
+  gajiAtas  Decimal? @db.Decimal(15, 2) @map("gaji_atas")
+  sumber    String?  @db.VarChar(255)
+  catatan   String?  @db.Text
+  isSample  Boolean  @default(false) @map("is_sample")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("salary_benchmarks")
+}
+
+model JobOffer {
+  id               BigInt   @id @default(autoincrement())
+  userId           BigInt   @map("user_id")
+  jobApplicationId BigInt?  @map("job_application_id")
+  perusahaan       String   @db.VarChar(150)
+  posisi           String   @db.VarChar(150)
+  gajiPokok        Decimal? @db.Decimal(15, 2) @map("gaji_pokok")
+  tunjangan        String?  @db.VarChar(500)
+  thpEstimasi      Decimal? @db.Decimal(15, 2) @map("thp_estimasi")
+  wlb              Int
+  jenjang          Int
+  budaya           Int
+  catatan          String?  @db.Text
+  isSample         Boolean  @default(false) @map("is_sample")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobApplication   JobApplication? @relation(fields: [jobApplicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([jobApplicationId])
+  @@map("job_offers")
+}

@@ -1,0 +1,21 @@
+{
+  "name": "job-application-manager",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "pnpm --parallel -r dev",
+    "dev:web": "pnpm --filter @jam/web dev",
+    "dev:api": "pnpm --filter @jam/api dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "db:migrate": "pnpm --filter @jam/api db:migrate",
+    "db:seed": "pnpm --filter @jam/api db:seed"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "packageManager": "pnpm@10.12.4"
+}
