@@ -36,7 +36,7 @@ function SalaryChart({ items, expectation }: { items: Salary[]; expectation: num
         {expectation == null ? (
           <p className="text-[13px] text-text-muted">Isi ekspektasi gaji di Setup untuk garis pembanding.</p>
         ) : (
-          <p className="text-[13px] font-semibold text-accent-secondary">Garis putus-putus = ekspektasi kamu</p>
+          <p className="text-[13px] font-semibold text-accent-text-secondary">Garis putus-putus = ekspektasi kamu</p>
         )}
       </div>
       <svg viewBox={`0 0 1000 ${withData.length * 56 + 20}`} className="mt-4 w-full" role="img" aria-label="Chart range gaji per role">
@@ -65,6 +65,16 @@ function SalaryChart({ items, expectation }: { items: Salary[]; expectation: num
             strokeWidth={2}
             strokeDasharray="6 4"
           />
+        )}
+        {expectation != null && (
+          <text
+            x={(expectation / max) * 980 + 10}
+            y={12}
+            textAnchor="middle"
+            style={{ fontSize: 10, fill: "var(--color-info-text)", fontWeight: 600 }}
+          >
+            Ekspektasi
+          </text>
         )}
       </svg>
     </Card>

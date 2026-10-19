@@ -17,10 +17,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClass: Record<Variant, string> = {
-  primary: "bg-accent text-white shadow-clay-md",
-  secondary: "bg-accent-soft text-accent shadow-clay-md",
-  ghost: "bg-transparent text-accent",
-  danger: "bg-danger text-white shadow-clay-md",
+  primary: "border-2 border-text-primary bg-accent text-white shadow-clay-md hover:bg-accent-strong",
+  secondary: "border-2 border-text-primary bg-accent-soft text-accent-text shadow-clay-md",
+  ghost: "border-2 border-text-primary bg-transparent text-accent-text",
+  danger: "border-2 border-text-primary bg-danger text-text-primary shadow-clay-md",
 };
 
 const sizeClass: Record<Size, string> = {
@@ -36,8 +36,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         disabled={isDisabled}
-        className={`inline-flex items-center justify-center gap-2 rounded-pill font-semibold
-          transition-[transform,box-shadow] duration-150
+        aria-busy={loading || undefined}
+        className={`inline-flex items-center justify-center gap-2 rounded-md font-bold
+          transition-[transform,box-shadow,background-color] duration-150
           ${variantClass[variant]} ${sizeClass[size]}
           ${variant !== "ghost" && !isDisabled ? "hover:-translate-y-0.5 hover:shadow-clay-lg active:translate-y-px active:shadow-clay-pressed" : ""}
           ${variant === "ghost" && !isDisabled ? "hover:bg-accent-soft active:shadow-clay-pressed" : ""}

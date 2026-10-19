@@ -6,10 +6,10 @@ import { forwardRef, type InputHTMLAttributes, type SelectHTMLAttributes, type T
  */
 
 const INSET =
-  "w-full rounded-md bg-surface-sunken px-4 text-[15px] text-text-primary " +
+  "w-full rounded-md border-2 border-text-primary bg-surface px-4 text-[15px] text-text-primary " +
   "shadow-clay-pressed placeholder:text-text-muted " +
   "focus:outline-3 focus:outline-accent focus:ring-3 focus:ring-accent-soft " +
-  "disabled:opacity-45 read-only:opacity-80";
+  "disabled:opacity-45 read-only:opacity-80";;
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   ({ className = "", ...rest }, ref) => <input ref={ref} className={`${INSET} h-11 ${className}`} {...rest} />,
@@ -17,7 +17,7 @@ export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
 Input.displayName = "Input";
 
 export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
-  ({ className = "", ...rest }, ref) => <select ref={ref} className={`${INSET} h-11 ${className}`} {...rest} />,
+  ({ className = "", ...rest }, ref) => <select ref={ref} className={`${INSET} h-11 cursor-pointer ${className}`} {...rest} />,
 );
 Select.displayName = "Select";
 

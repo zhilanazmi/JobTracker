@@ -1,112 +1,215 @@
-/*
- * theme.css — token dari design/job-manager.pen (DESIGN_INVENTORY.md).
- * ATURAN: 0 nilai arbitrary di kode aplikasi. Semua lewat token ini.
- * Dark mode: [data-theme="dark"] (set di <html>).
- */
-
+/* Neobrutalist warm palette and app semantic tokens. */
 @import "tailwindcss";
 
+:root {
+  --background: #fffdf5;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #facc15;
+  --primary-foreground: #18181b;
+  --secondary: #fbcfe8;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #52525b;
+  --accent: #a7f3d0;
+  --accent-foreground: #18181b;
+  --destructive: #fca5a5;
+  --destructive-foreground: #18181b;
+  --border: #18181b;
+  --input: #18181b;
+  --ring: #18181b;
+}
+
+[data-theme="dark"] {
+  --background: #24211d;
+  --foreground: #fffdf5;
+  --card: #302c26;
+  --card-foreground: #fffdf5;
+  --popover: #302c26;
+  --popover-foreground: #fffdf5;
+  --primary: #facc15;
+  --primary-foreground: #18181b;
+  --secondary: #553b4a;
+  --secondary-foreground: #fce7f3;
+  --muted: #3a352f;
+  --muted-foreground: #d6d0c5;
+  --accent: #245344;
+  --accent-foreground: #d1fae5;
+  --destructive: #7f3131;
+  --destructive-foreground: #ffe4e4;
+  --border: #fffdf5;
+  --input: #fffdf5;
+  --ring: #facc15;
+}
+
 @theme {
-  /* Font (prompt §2: Nunito self-host, fallback Quicksand tidak di-host) */
   --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
 
-  /* Light values default */
-  --color-canvas: #f4f0fa;
+  --color-canvas: #fffdf5;
   --color-surface: #ffffff;
-  --color-surface-sunken: #ede7f8;
-  --color-text-primary: #2e2a3b;
-  --color-text-secondary: #5a5370;
-  --color-text-muted: #6b6480;
-  --color-accent: #7c6aa8;
-  --color-accent-soft: #e4dcf5;
-  --color-accent-secondary: #f2a98c;
-  --color-accent-tertiary: #86c5b4;
-  --color-success: #7fbf8a;
-  --color-success-soft: #dff0e2;
-  --color-success-text: #2f6b3f;
-  --color-warning: #f2c572;
-  --color-warning-soft: #fbefd6;
-  --color-warning-text: #8a6410;
-  --color-danger: #e98b8b;
-  --color-danger-soft: #fadede;
-  --color-danger-text: #9b3b3b;
-  --color-info: #8fb3e0;
-  --color-info-soft: #dee9f7;
-  --color-info-text: #2e5a96;
-  --color-neutral: #b4aec4;
-  --color-neutral-soft: #ebe8f2;
-  --color-neutral-text: #5c5570;
+  --color-surface-sunken: #f4f4f5;
+  --color-rail: #fef3c7;
+  --color-rail-strong: #fde68a;
+  --color-text-primary: #18181b;
+  --color-text-secondary: #3f3f46;
+  --color-text-muted: #52525b;
+  --color-accent: #facc15;
+  --color-accent-strong: #eab308;
+  --color-accent-text: #18181b;
+  --color-accent-soft: #fef08a;
+  --color-accent-secondary: #a7f3d0;
+  --color-accent-tertiary: #fbcfe8;
+  --color-success: #86efac;
+  --color-success-soft: #dcfce7;
+  --color-success-text: #14532d;
+  --color-warning: #facc15;
+  --color-warning-soft: #fef9c3;
+  --color-warning-text: #713f12;
+  --color-danger: #fca5a5;
+  --color-danger-soft: #fee2e2;
+  --color-danger-text: #7f1d1d;
+  --color-info: #bae6fd;
+  --color-info-soft: #e0f2fe;
+  --color-info-text: #0c4a6e;
+  --color-neutral: #d4d4d8;
+  --color-neutral-soft: #f4f4f5;
+  --color-neutral-text: #3f3f46;
+  --color-shadow-outer-1: #18181b;
+  --color-shadow-outer-2: #18181b;
+  --color-shadow-inner-dark: #18181b;
+  --color-shadow-highlight: #ffffff;
 
-  /* Shadow warna (light) */
-  --color-shadow-outer-1: #7c6aa838;
-  --color-shadow-outer-2: #7c6aa824;
-  --color-shadow-inner-dark: #8b7ab82e;
-  --color-shadow-highlight: #ffffffd9;
-
-  /* Radius (tidak ada sudut < 14px di seluruh app) */
-  --radius-sm: 14px;
-  --radius-md: 22px;
-  --radius-lg: 32px;
-  --radius-xl: 44px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
   --radius-pill: 999px;
 
-  /* Spacing dari token .pen */
   --spacing-card: 24px;
   --spacing-gap: 20px;
   --spacing-page: 32px;
 
-  /* Shadow clay — komposisi dari effect node .pen (DECISIONS.md D3) */
-  --shadow-clay-sm:
-    0 7.2px 14.4px -3.6px var(--color-shadow-outer-1),
-    0 2.4px 4.8px -2.4px var(--color-shadow-outer-2),
-    inset 0 -3.6px 7.2px var(--color-shadow-inner-dark),
-    inset 0 3.6px 6px var(--color-shadow-highlight);
-  --shadow-clay-md:
-    0 12px 24px -6px var(--color-shadow-outer-1),
-    0 4px 8px -4px var(--color-shadow-outer-2),
-    inset 0 -6px 12px var(--color-shadow-inner-dark),
-    inset 0 6px 10px var(--color-shadow-highlight);
-  --shadow-clay-lg:
-    0 19.2px 38.4px -9.6px var(--color-shadow-outer-1),
-    0 6.4px 12.8px -6.4px var(--color-shadow-outer-2),
-    inset 0 -9.6px 19.2px var(--color-shadow-inner-dark),
-    inset 0 9.6px 16px var(--color-shadow-highlight);
-  --shadow-clay-pressed:
-    inset 0 -6px 12px var(--color-shadow-inner-dark),
-    inset 0 6px 10px var(--color-shadow-highlight);
+  --container-sidebar: 260px;
+  --container-drawer: 520px;
+  --container-table-sm: 760px;
+  --container-table-md: 820px;
+  --container-table-lg: 900px;
+  --container-modal: 90dvh;
+
+  --shadow-clay-sm: 2px 2px 0 var(--color-shadow-outer-1);
+  --shadow-clay-md: 4px 4px 0 var(--color-shadow-outer-1);
+  --shadow-clay-lg: 6px 6px 0 var(--color-shadow-outer-1);
+  --shadow-clay-pressed: 1px 1px 0 var(--color-shadow-outer-1);
+  --shadow-neo-sm: 2px 2px 0 var(--color-shadow-outer-1);
+  --shadow-neo-md: 4px 4px 0 var(--color-shadow-outer-1);
+  --shadow-neo-lg: 6px 6px 0 var(--color-shadow-outer-1);
 }
 
-/* ===== Dark mode: nilai token .pen tema gelap ===== */
 [data-theme="dark"] {
-  --color-canvas: #201c2b;
-  --color-surface: #2b2639;
-  --color-surface-sunken: #231f30;
-  --color-text-primary: #f0edf7;
-  --color-text-secondary: #b6b0c6;
-  --color-text-muted: #9a93ac;
-  --color-accent: #a48fd0;
-  --color-accent-soft: #39335a;
-  /* accent-secondary/tertiary & status*tanpa-suffix tetap sama (lihat inventory) */
-  --color-success: #8fd09a;
-  --color-success-soft: #2a3b2e;
-  --color-success-text: #a7dcb0;
-  --color-warning-soft: #413522;
-  --color-warning-text: #f0ce8e;
-  --color-danger-soft: #442a2e;
-  --color-danger-text: #f0a8a8;
-  --color-info-soft: #25334a;
-  --color-info-text: #a9c6ec;
-  --color-neutral-soft: #332e42;
-  --color-neutral-text: #c4bed2;
-
-  --color-shadow-outer-1: #00000073;
-  --color-shadow-outer-2: #00000047;
-  --color-shadow-inner-dark: #00000066;
-  --color-shadow-highlight: #ffffff1a;
+  --color-canvas: #24211d;
+  --color-surface: #302c26;
+  --color-surface-sunken: #1d1b18;
+  --color-rail: #302c26;
+  --color-rail-strong: #423c33;
+  --color-text-primary: #fffdf5;
+  --color-text-secondary: #e5dfd3;
+  --color-text-muted: #c2baad;
+  --color-accent: #facc15;
+  --color-accent-strong: #fde047;
+  --color-accent-text: #fde68a;
+  --color-accent-soft: #564710;
+  --color-accent-secondary: #245344;
+  --color-accent-tertiary: #553b4a;
+  --color-success: #86efac;
+  --color-success-soft: #17452c;
+  --color-success-text: #bbf7d0;
+  --color-warning: #fde047;
+  --color-warning-soft: #564710;
+  --color-warning-text: #fef08a;
+  --color-danger: #fca5a5;
+  --color-danger-soft: #582b2b;
+  --color-danger-text: #fecaca;
+  --color-info: #bae6fd;
+  --color-info-soft: #164453;
+  --color-info-text: #c4f1ff;
+  --color-neutral: #a8a29e;
+  --color-neutral-soft: #49443e;
+  --color-neutral-text: #f5f5f4;
+  --color-shadow-outer-1: #000000;
+  --color-shadow-outer-2: #000000;
+  --color-shadow-inner-dark: #000000;
+  --color-shadow-highlight: #ffffff;
 }
 
 body {
   background: var(--color-canvas);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
+}
+
+/* Bold outlines and compact corners across all routes. */
+[class~="bg-surface"],
+[class~="bg-surface-sunken"],
+[class~="bg-rail"],
+[class~="bg-success-soft"],
+[class~="bg-danger-soft"],
+[class~="bg-accent-soft"] {
+  border: 2px solid var(--color-text-primary);
+  border-radius: var(--radius-md);
+}
+
+[class*="shadow-clay-"] {
+  border-color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+}
+
+[class~="rounded-pill"] {
+  border-radius: var(--radius-md);
+}
+
+button,
+a,
+[role="button"],
+[role="tab"] {
+  transition-property: transform, box-shadow, background-color, color;
+  transition-duration: 150ms;
+}
+
+button:not(:disabled):active,
+a:active,
+[role="button"]:active,
+[role="tab"]:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--color-text-primary);
+}
+
+button,
+a,
+input,
+select,
+textarea,
+[role="tab"],
+[role="button"] {
+  touch-action: manipulation;
+}
+
+table,
+.dl-data,
+[role="timer"],
+.text-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

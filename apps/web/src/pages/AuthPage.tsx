@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Eye, EyeOff } from "lucide-react";
 import { Button, Input, Field } from "@/components/ui";
 import { api, ApiError } from "@/lib/api";
 
@@ -17,6 +17,7 @@ export function AuthPage({ mode: initialMode }: { mode: "login" | "register" }) 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nama, setNama] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const submit = useMutation({
@@ -52,21 +53,21 @@ export function AuthPage({ mode: initialMode }: { mode: "login" | "register" }) 
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="mb-6 flex items-center justify-center gap-3">
-          <span className="flex h-14 w-14 items-center justify-center rounded-pill bg-accent text-white shadow-clay-md">
+          <span className="flex h-14 w-14 items-center justify-center rounded-md border-2 border-text-primary bg-accent text-white shadow-clay-md">
             <Briefcase size={26} aria-hidden />
           </span>
           <span className="text-[24px] font-extrabold leading-tight">Job Application<br />Manager</span>
         </div>
 
-        <div className="rounded-xl bg-surface p-card shadow-clay-lg">
+        <div className="rounded-lg border-2 border-text-primary bg-surface p-card shadow-clay-lg">
           {/* Tab */}
-          <div className="flex items-center gap-1 self-center rounded-pill bg-surface-sunken p-1" role="tablist" aria-label="Masuk atau daftar">
+          <div className="flex items-center gap-1 self-center rounded-md border-2 border-text-primary bg-surface-sunken p-1" role="tablist" aria-label="Masuk atau daftar">
             <button role="tab" aria-selected={mode === "login"} onClick={() => switchMode("login")}
-              className={`h-9 flex-1 rounded-pill text-[13px] font-semibold ${mode === "login" ? "bg-surface text-accent shadow-clay-sm" : "text-text-muted"}`}>
+              className={`h-9 flex-1 rounded-md text-[13px] font-semibold ${mode === "login" ? "border-2 border-text-primary bg-surface text-accent-text shadow-clay-sm" : "text-text-muted"}`}>
               Masuk
             </button>
             <button role="tab" aria-selected={mode === "register"} onClick={() => switchMode("register")}
-              className={`h-9 flex-1 rounded-pill text-[13px] font-semibold ${mode === "register" ? "bg-surface text-accent shadow-clay-sm" : "text-text-muted"}`}>
+              className={`h-9 flex-1 rounded-md text-[13px] font-semibold ${mode === "register" ? "border-2 border-text-primary bg-surface text-accent-text shadow-clay-sm" : "text-text-muted"}`}>
               Daftar
             </button>
           </div>
@@ -90,13 +91,25 @@ export function AuthPage({ mode: initialMode }: { mode: "login" | "register" }) 
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nama@email.com" autoComplete="email" required />
             </Field>
             <Field label="Password">
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                placeholder={mode === "register" ? "Minimal 8 karakter" : "Password kamu"}
-                autoComplete={mode === "register" ? "new-password" : "current-password"} required minLength={8} />
+              <div className="relative">
+                <Input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
+                  placeholder={mode === "register" ? "Minimal 8 karakter" : "Password kamu"}
+                  autoComplete={mode === "register" ? "new-password" : "current-password"} required minLength={8}
+                  className="pr-12" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                  aria-pressed={showPassword}
+                  className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md border-2 border-transparent text-text-muted transition-colors hover:bg-accent-soft hover:text-accent-text focus-visible:outline-3 focus-visible:outline-accent"
+                >
+                  {showPassword ? <EyeOff size={17} aria-hidden /> : <Eye size={17} aria-hidden />}
+                </button>
+              </div>
             </Field>
 
             {error && (
-              <p role="alert" className="rounded-md bg-danger-soft px-4 py-2.5 text-[13px] font-semibold text-danger-text">
+              <p role="alert" className="rounded-md border-2 border-text-primary bg-danger-soft px-4 py-2.5 text-[13px] font-semibold text-danger-text">
                 {error}
               </p>
             )}

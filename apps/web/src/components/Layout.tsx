@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, BookOpen, Settings, Globe, Briefcase, FileText, Users,
-  GraduationCap, MessagesSquare, TrendingUp, Scale, Search, Moon, Sun, Menu, LogOut,
+  GraduationCap, MessagesSquare, TrendingUp, Scale, Search, Moon, Sun, Menu, LogOut, X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,7 +16,6 @@ import { useHotkeys } from "@/hooks/useHotkeys";
  */
 
 const NAV = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/panduan", label: "Panduan", icon: BookOpen },
   { to: "/setup", label: "Setup", icon: Settings },
   { to: "/portal", label: "Portal Job", icon: Globe },
@@ -27,6 +26,7 @@ const NAV = [
   { to: "/interview", label: "Interview", icon: MessagesSquare },
   { to: "/gaji", label: "Riset Gaji", icon: TrendingUp },
   { to: "/offer", label: "Offer", icon: Scale },
+  { to: "/", label: "Dashboard", icon: LayoutDashboard },
 ];
 
 const TITLES: Record<string, { title: string; desc: string }> = {
@@ -55,7 +55,7 @@ function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label={dark ? "Aktifkan mode terang" : "Aktifkan mode gelap"}
-      className="flex h-11 w-11 items-center justify-center rounded-pill bg-surface text-text-secondary shadow-clay-sm hover:text-accent"
+      className="flex h-11 w-11 items-center justify-center rounded-pill bg-surface text-text-secondary shadow-clay-sm hover:text-accent-text"
     >
       {dark ? <Sun size={18} /> : <Moon size={18} />}
     </button>
@@ -100,6 +100,14 @@ export function Layout() {
 
   useEffect(() => setNavOpen(false), [pathname]);
 
+  // Escape menutup drawer menu mobile.
+  useEffect(() => {
+    if (!navOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setNavOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [navOpen]);
+
   const navLinks = (
     <nav className="flex flex-col gap-1" aria-label="Navigasi utama">
       {NAV.map(({ to, label, icon: Icon }) => (
@@ -108,10 +116,10 @@ export function Layout() {
           to={to}
           end={to === "/"}
           className={({ isActive }) =>
-            `flex items-center gap-3 rounded-md px-4 py-2.5 text-[15px] font-semibold transition-colors ${
+            `flex items-center gap-3 rounded-md px-4 py-2.5 text-[15px] font-semibold transition-all ${
               isActive
-                ? "bg-accent-soft text-accent shadow-clay-pressed"
-                : "text-text-secondary hover:bg-surface-sunken hover:text-text-primary"
+                ? "bg-surface text-accent-text shadow-clay-sm"
+                : "text-text-secondary hover:bg-rail-strong hover:text-text-primary"
             }`
           }
         >
@@ -124,10 +132,10 @@ export function Layout() {
 
   return (
     <div className="min-h-dvh flex bg-canvas">
-      {/* Sidebar desktop */}
-      <aside className="hidden lg:flex w-[260px] shrink-0 flex-col gap-6 rounded-r-xl bg-surface p-6 shadow-clay-md sticky top-0 h-dvh">
+      {/* Sidebar desktop — deeper blue rail anchors the workspace. */}
+      <aside className="hidden lg:flex w-sidebar shrink-0 flex-col gap-6 rounded-r-xl bg-rail p-6 shadow-clay-md sticky top-0 h-dvh">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-pill bg-accent text-white shadow-clay-sm font-extrabold">J</span>
+          <span className="flex h-11 w-11 items-center justify-center rounded-pill bg-accent text-white shadow-clay-md font-extrabold">J</span>
           <span className="text-[17px] font-extrabold leading-tight">Job Application<br />Manager</span>
         </div>
         {navLinks}
@@ -163,25 +171,54 @@ export function Layout() {
         </main>
       </div>
 
+      {/* Drawer nav mobile — hamburger sebelumnya tanpa panel (bug) */}
+      {navOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu navigasi">
+          <button className="absolute inset-0 bg-text-primary/45" onClick={() => setNavOpen(false)} aria-label="Tutup menu" />
+          <div className="relative flex h-full w-72 flex-col gap-6 overflow-y-auto rounded-r-xl bg-rail p-6 shadow-clay-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-pill bg-accent text-white shadow-clay-md font-extrabold">J</span>
+                <span className="text-[17px] font-extrabold leading-tight">Job Application<br />Manager</span>
+              </div>
+              <button
+                onClick={() => setNavOpen(false)}
+                aria-label="Tutup menu"
+                className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-pill bg-surface shadow-clay-sm transition-colors hover:bg-rail-strong focus-visible:outline-3 focus-visible:outline-accent"
+              >
+                <X size={18} aria-hidden />
+              </button>
+            </div>
+            {navLinks}
+            <div className="mt-auto flex items-center justify-between">
+              <ThemeToggle />
+              <AccountMenu />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Bottom nav mobile */}
       <nav
         className="lg:hidden fixed bottom-0 inset-x-0 z-40 flex h-18 items-center justify-around rounded-t-xl bg-surface px-2 shadow-clay-lg"
         aria-label="Navigasi utama mobile"
       >
-        {NAV.filter((_, i) => [0, 4, 3, 5, 7].includes(i)).map(({ to, label, icon: Icon }) => (
+        {NAV.filter(({ to }) => ["/", "/tracker", "/portal", "/dokumen", "/kontak"].includes(to)).map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
             end={to === "/"}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-0.5 px-2 py-1 text-[11px] font-semibold ${isActive ? "text-accent" : "text-text-muted"}`
+              `flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg px-2 py-1 text-[11px] font-semibold transition-colors ${
+                isActive ? "bg-rail text-accent-text" : "text-text-muted"
+              }`
             }
           >
             <Icon size={22} aria-hidden />
             {label}
           </NavLink>
         ))}
-        <NavLink to="/panduan" className={({ isActive }) => `flex flex-col items-center gap-0.5 px-2 py-1 text-[11px] font-semibold ${isActive ? "text-accent" : "text-text-muted"}`}>
+        <NavLink to="/panduan" className={({ isActive }) => `flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg px-2 py-1 text-[11px] font-semibold transition-colors ${isActive ? "bg-rail text-accent-text" : "text-text-muted"}`}>
           <Menu size={22} aria-hidden />
           Lainnya
         </NavLink>

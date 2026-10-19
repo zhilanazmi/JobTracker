@@ -82,7 +82,7 @@ export function PortalPage() {
               aria-selected={view === v}
               onClick={() => setParam("view", v === "cards" ? "" : v)}
               className={`h-9 rounded-pill px-4 text-[13px] font-semibold transition-shadow ${
-                view === v ? "bg-surface text-accent shadow-clay-sm" : "text-text-muted"
+                view === v ? "bg-surface text-accent-text shadow-clay-sm" : "text-text-muted"
               }`}
             >
               {label}
@@ -148,7 +148,7 @@ function usePortals(filter?: { tipe?: string; fokus?: string }) {
   });
 }
 
-const INITIALS_COLORS = ["bg-accent-soft text-accent", "bg-info-soft text-info-text", "bg-success-soft text-success-text", "bg-warning-soft text-warning-text", "bg-danger-soft text-danger-text"];
+const INITIALS_COLORS = ["bg-accent-soft text-accent-text", "bg-info-soft text-info-text", "bg-success-soft text-success-text", "bg-warning-soft text-warning-text", "bg-danger-soft text-danger-text"];
 
 function PortalCard({ portal, onEdit, onDelete }: { portal: Portal; onEdit: (p: Portal) => void; onDelete: (p: Portal) => void }) {
   const colorIdx = (portal.tipe?.length ?? 0) % INITIALS_COLORS.length;
@@ -157,7 +157,7 @@ function PortalCard({ portal, onEdit, onDelete }: { portal: Portal; onEdit: (p: 
   return (
     <Card className="relative flex h-full flex-col">
       <div className="absolute right-4 top-4 flex gap-1">
-        <button onClick={() => onEdit(portal)} aria-label={`Edit ${portal.namaPortal}`} className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-accent-soft hover:text-accent">
+        <button onClick={() => onEdit(portal)} aria-label={`Edit ${portal.namaPortal}`} className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-accent-soft hover:text-accent-text">
           <Pencil size={15} aria-hidden />
         </button>
         <button onClick={() => onDelete(portal)} aria-label={`Hapus ${portal.namaPortal}`} className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-text">
@@ -177,7 +177,7 @@ function PortalCard({ portal, onEdit, onDelete }: { portal: Portal; onEdit: (p: 
       <p className="mt-2 line-clamp-2 text-xs text-text-muted">{portal.catatan}</p>
       <div className="mt-auto flex items-center justify-between pt-4">
         {portal.link && (
-          <a href={portal.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-[13px] font-semibold text-accent hover:underline">
+          <a href={portal.link} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-[13px] font-semibold text-accent-text hover:underline">
             {domain} <ExternalLink size={13} aria-hidden />
           </a>
         )}
@@ -190,7 +190,7 @@ function PortalCard({ portal, onEdit, onDelete }: { portal: Portal; onEdit: (p: 
 function PortalTable({ items, onEdit, onDelete }: { items: Portal[]; onEdit: (p: Portal) => void; onDelete: (p: Portal) => void }) {
   return (
     <div className="overflow-x-auto rounded-lg bg-surface shadow-clay-md">
-      <table className="w-full min-w-[760px] border-collapse text-[15px]">
+      <table className="w-full min-w-table-sm border-collapse text-[15px]">
         <thead>
           <tr className="bg-surface-sunken text-left text-[13px] font-semibold text-text-secondary">
             <th className="px-4 py-3">Nama Portal</th>
@@ -208,12 +208,12 @@ function PortalTable({ items, onEdit, onDelete }: { items: Portal[]; onEdit: (p:
               <td className="px-4 py-3 font-semibold">{p.namaPortal}</td>
               <td className="px-4 py-3 text-text-secondary">{p.fokus ?? "—"}</td>
               <td className="px-4 py-3">{p.tipe ? <Chip>{p.tipe}</Chip> : "—"}</td>
-              <td className="px-4 py-3">{p.link && <a href={p.link} target="_blank" rel="noreferrer" className="text-accent hover:underline">Buka</a>}</td>
+              <td className="px-4 py-3">{p.link && <a href={p.link} target="_blank" rel="noreferrer" className="text-accent-text hover:underline">Buka</a>}</td>
               <td className="px-4 py-3 text-text-secondary">{p.cocokUntuk ?? "—"}</td>
               <td className="max-w-60 truncate px-4 py-3 text-text-muted">{p.catatan ?? "—"}</td>
               <td className="px-4 py-3">
                 <div className="flex gap-1">
-                  <button onClick={() => onEdit(p)} aria-label={`Edit ${p.namaPortal}`} className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-accent-soft hover:text-accent">
+                  <button onClick={() => onEdit(p)} aria-label={`Edit ${p.namaPortal}`} className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-accent-soft hover:text-accent-text">
                     <Pencil size={15} aria-hidden />
                   </button>
                   <button onClick={() => onDelete(p)} aria-label={`Hapus ${p.namaPortal}`} className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-text">
@@ -250,8 +250,8 @@ function PortalForm({ portal, onClose }: { portal: Portal | null; onClose: () =>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="portal-form-title">
-      <button className="absolute inset-0 bg-text-primary/30" onClick={onClose} aria-label="Tutup" />
-      <Card className="relative max-h-[90dvh] w-full max-w-lg overflow-y-auto">
+      <button className="absolute inset-0 bg-text-primary/45" onClick={onClose} aria-label="Tutup" />
+      <Card className="relative max-h-modal w-full max-w-lg overflow-y-auto">
         <h2 id="portal-form-title" className="text-xl font-extrabold">{portal ? "Edit Portal" : "Tambah Portal"}</h2>
         <div className="mt-4 flex flex-col gap-3">
           <Field label="Nama Portal"><Input value={form.namaPortal} onChange={(e) => setForm({ ...form, namaPortal: e.target.value })} /></Field>
@@ -282,7 +282,7 @@ function DeletePortalConfirm({ portal, onClose }: { portal: Portal; onClose: () 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="portal-delete-title">
-      <button className="absolute inset-0 bg-text-primary/30" onClick={onClose} aria-label="Tutup" />
+      <button className="absolute inset-0 bg-text-primary/45" onClick={onClose} aria-label="Tutup" />
       <Card className="relative w-full max-w-md">
         <h2 id="portal-delete-title" className="text-xl font-extrabold">Hapus Portal</h2>
         <p className="mt-3 text-[15px] text-text-secondary">

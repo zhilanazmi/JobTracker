@@ -52,3 +52,17 @@ Seharusnya toast komponen. Dibatasi sampai v1.1 (toast design belum digambar di 
 ### D13: Panel `offerWeights` otomatis normalisasi sisa bobot
 Slider mengubah satu bobot → sisa 3 di-rescale proporsional agar total selalu 100. Prompt hanya minta warning & tidak simpan; implementasi ini lebih baik (tidak bisa invalid), catat sebagai penyimpangan netral.
 
+
+### D14: Token `rail` — latar sidebar beda dari canvas tapi senada (2026-09-25)
+Permintaan user: sidebar & body beda warna, tetap satu keluarga. Ditambahkan token `--color-rail` (light #ece5f6, dark #2a2439) + `--color-rail-strong` (hover nav). Satu hue ungu dengan canvas, satu langkah lebih dalam/dalam dark lebih terang. Sidebar desktop & drawer mobile pakai `bg-rail`; nav item aktif = pill `bg-surface` terangkat (konsisten dengan toggle view Tracker/Portal), bukan lagi `bg-accent-soft` (terlalu dekat dengan rail). Dark mode dipasangkan sekaligus (aturan dark-mode-pairing). `.pen` tidak diubah — token baru turunan hue canvas yang sudah ada.
+
+### D15: Palet biru user menggantikan ungu .pen (2026-09-25)
+Permintaan user: palet #2373F4 (utama) / #578EF5 (hover) / #65D0F4 (cyan) / #F2F7A0 (kuning). Semua via token theme.css, layout/konten/alur tak berubah:
+- `accent` = #2373F4: primary button, fokus ring, bar chart, active state. Teks putih di atasnya (kontras 4.6:1 ✓).
+- `accent-strong` (BARU) = #578EF5: hover primary button. Tidak dipaksakan ke tempat lain.
+- `accent-text` (BARU) = #1A5CD6 light / #7EA6F7 dark: SEMUA teks biru di surface terang — #2373F4 hanya 4.35:1 < AA 4.5 untuk teks kecil, jadi teks pakai turunan gelap. 39 lokasi diganti (`text-accent` → `text-accent-text`).
+- `accent-secondary` = #65D0F4 (cyan): Avatar, tint banner dashboard, garis ekspektasi chart. Teks gelap di atasnya. Garis chart diberi label teks "Ekspektasi" (color-not-only).
+- `accent-tertiary` = #F2F7A0 (kuning): HANYA badge "Skor Tertinggi" + radar offer (hemat sesuai instruksi). Teks gelap di atasnya (12:1 ✓).
+- Netral hijau-abu-biru (#f5f8fd canvas, rail/sunken keluarga biru), teks navy gelap. Status error/warning/success/info TIDAK disentuh (permintaan user).
+- Dark mode dipasangkan: canvas navy gelap, accent = #7EA6F7 (lighter tone, bukan #2373F4 mentah yang kontrasnya rendah di gelap). shadow tint biru.
+- `.pen` tidak diubah (read-only); ini deviasi visual tercatat D15.

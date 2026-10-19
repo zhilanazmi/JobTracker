@@ -96,7 +96,7 @@ export function OffersPage() {
           {(["gaji", "wlb", "jenjang", "budaya"] as const).map((k) => (
             <label key={k} className="flex flex-col gap-2">
               <span className="flex items-center justify-between text-[13px] font-semibold capitalize">
-                {k} <span className="text-accent">{weights[k]}%</span>
+                {k} <span className="text-accent-text">{weights[k]}%</span>
               </span>
               <input
                 type="range"
@@ -143,13 +143,26 @@ export function OffersPage() {
                 points={dataPoints(150, 130, 100, [o.wlb, o.jenjang, o.budaya])}
                 fill={["var(--color-accent)", "var(--color-accent-secondary)", "var(--color-accent-tertiary)"][i]}
                 fillOpacity={0.35}
-                stroke="var(--color-accent)"
+                stroke={["var(--color-accent)", "var(--color-accent-secondary)", "var(--color-accent-tertiary)"][i]}
+                strokeWidth={1.5}
               />
             ))}
             <text x={150} y={16} textAnchor="middle" style={{ fontSize: 11 }}>WLB</text>
             <text x={278} y={242} textAnchor="middle" style={{ fontSize: 11 }}>Jenjang</text>
             <text x={22} y={242} textAnchor="middle" style={{ fontSize: 11 }}>Budaya</text>
           </svg>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-4">
+            {selected.map((o, i) => (
+              <span key={o.id} className="flex items-center gap-1.5 text-[13px] font-semibold text-text-secondary">
+                <span
+                  className="h-3 w-3 rounded-pill"
+                  style={{ backgroundColor: ["var(--color-accent)", "var(--color-accent-secondary)", "var(--color-accent-tertiary)"][i] }}
+                  aria-hidden
+                />
+                {o.perusahaan}
+              </span>
+            ))}
+          </div>
         </Card>
       )}
     </div>
@@ -177,7 +190,7 @@ function OfferCard({ offer, score, isTop }: { offer: Offer; score: number; isTop
     <Card className={`relative flex flex-col ${isTop ? "ring-3 ring-accent-tertiary -translate-y-1.5" : ""}`}>
       {isTop && <span className="absolute -top-3 right-4 rounded-pill bg-accent-tertiary px-3 py-0.5 text-xs font-extrabold shadow-clay-sm">Skor Tertinggi</span>}
       <div className="flex items-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-pill bg-accent-soft text-[15px] font-extrabold text-accent shadow-clay-sm">{initials}</span>
+        <span className="flex h-12 w-12 items-center justify-center rounded-pill bg-accent-soft text-[15px] font-extrabold text-accent-text shadow-clay-sm">{initials}</span>
         <div className="min-w-0">
           <h3 className="truncate text-lg font-extrabold">{offer.perusahaan}</h3>
           <p className="text-[13px] text-text-secondary">{offer.posisi}</p>

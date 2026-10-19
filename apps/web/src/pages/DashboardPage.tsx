@@ -27,12 +27,12 @@ export function DashboardPage() {
   return (
     <div className="flex flex-col gap-gap">
       {data.profileIncomplete && (
-        <div className="flex h-16 items-center gap-4 rounded-md bg-accent-secondary/30 px-6 shadow-clay-sm">
-          <Settings size={24} className="text-accent shrink-0" aria-hidden />
-          <p className="flex-1 text-[15px] font-semibold">Isi profil di Setup dulu biar target &amp; metrik akurat</p>
-          <Button size="sm" onClick={() => (window.location.href = "/setup")}>
-            Isi Sekarang
-          </Button>
+        <div className="flex min-h-16 flex-wrap items-center gap-4 rounded-md bg-accent-secondary/30 px-6 py-3 shadow-clay-sm">
+          <Settings size={24} className="text-accent-text shrink-0" aria-hidden />
+          <p className="min-w-0 flex-1 text-[15px] font-semibold">Isi profil di Setup dulu biar target &amp; metrik akurat</p>
+          <Link to="/setup" className="shrink-0">
+            <Button size="sm">Isi Sekarang</Button>
+          </Link>
         </div>
       )}
 
@@ -50,16 +50,19 @@ export function DashboardPage() {
         {/* Yang Harus Dikerjain */}
         <section className="rounded-lg bg-surface p-card shadow-clay-md" aria-labelledby="todo-title">
           <h2 id="todo-title" className="flex items-center gap-2 text-[22px] font-bold">
-            <Flame size={22} className="text-accent-secondary" aria-hidden /> Yang Harus Dikerjain
+            <Flame size={22} className="text-accent-text-secondary" aria-hidden /> Yang Harus Dikerjain
           </h2>
           <ul className="mt-4 divide-y divide-surface-sunken">
             {data.todo.map((item) => {
+              const Icon = TODO_ICONS[item.key] ?? Briefcase;
               const disabled = item.jumlah === 0;
               return (
                 <li key={item.key}>
                   {disabled ? (
                     <div className="flex h-14 items-center gap-4 opacity-50" aria-disabled>
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent-soft text-[18px] font-extrabold text-accent">{item.jumlah}</span>
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent-soft text-accent-text">
+                        <Icon size={18} aria-hidden />
+                      </span>
                       <span className="flex-1 min-w-0">
                         <span className="block text-[15px] font-semibold">{item.judul}</span>
                         <span className="block text-xs text-text-muted">{item.deskripsi}</span>
@@ -68,14 +71,16 @@ export function DashboardPage() {
                   ) : (
                     <Link
                       to={item.href}
-                      className="flex h-14 items-center gap-4 -mx-3 px-3 rounded-md transition-colors hover:bg-surface-sunken"
+                      className="-mx-3 flex min-h-14 items-center gap-4 rounded-md px-3 transition-colors hover:bg-surface-sunken"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent-soft text-[18px] font-extrabold text-accent">{item.jumlah}</span>
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-pill bg-accent-soft text-accent-text">
+                        <Icon size={18} aria-hidden />
+                      </span>
                       <span className="flex-1 min-w-0">
                         <span className="block text-[15px] font-semibold">{item.judul}</span>
                         <span className="block text-xs text-text-muted">{item.deskripsi}</span>
                       </span>
-                      <ChevronRight size={16} className="text-text-muted shrink-0" aria-hidden />
+                      <ChevronRight size={16} className="shrink-0 text-text-muted" aria-hidden />
                     </Link>
                   )}
                 </li>
@@ -87,7 +92,7 @@ export function DashboardPage() {
         {/* Funnel */}
         <section className="rounded-lg bg-surface p-card shadow-clay-md" aria-labelledby="funnel-title">
           <h2 id="funnel-title" className="flex items-center gap-2 text-[22px] font-bold">
-            <BarChart3 size={22} className="text-accent" aria-hidden /> Funnel Lamaran
+            <BarChart3 size={22} className="text-accent-text" aria-hidden /> Funnel Lamaran
           </h2>
           <ol className="mt-4 flex flex-col gap-4">
             {data.funnel.map((f, i) => {

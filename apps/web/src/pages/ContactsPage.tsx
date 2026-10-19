@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CrudTable, LinkCell, type ColumnDef, type FormFieldDef } from "@/components/CrudTable";
 import { Avatar, StatusBadge } from "@/components/ui";
@@ -46,6 +47,10 @@ const columns: ColumnDef<Contact>[] = [
     },
   },
   { key: "statusFollowUp", label: "Status", render: (c) => (c.statusFollowUp ? <StatusBadge label={c.statusFollowUp} warnaToken={c.statusFollowUp === "Perlu Follow-up" ? "danger" : c.statusFollowUp === "Menunggu Balasan" ? "info" : "success"} /> : "—") },
+  {
+    key: "aksi", label: "Aksi",
+    render: (c) => <FollowUpButton contact={c} />,
+  },
 ];
 
 const fields: FormFieldDef[] = [
@@ -62,20 +67,29 @@ const fields: FormFieldDef[] = [
 /** Tombol Follow-up (prompt §8.7): kontakTerakhir = hari ini + status "Menunggu Balasan". */
 function FollowUpButton({ contact }: { contact: Contact }) {
   const qc = useQueryClient();
+  const [done, setDone] = useState(false);
   const followUp = useMutation({
     mutationFn: () =>
       api.patch(`/api/contacts/${contact.id}`, {
         kontakTerakhir: todayWIB(),
         statusFollowUp: "Menunggu Balasan",
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["contacts"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["contacts"] });
+      setDone(true);
+      setTimeout(() => setDone(false), 2500);
+    },
   });
   return (
     <button
       onClick={(e) => { e.stopPropagation(); followUp.mutate(); }}
-      className="rounded-pill bg-accent-soft px-3 py-1 text-xs font-semibold text-accent shadow-clay-sm hover:shadow-clay-md"
+      disabled={followUp.isPending || done}
+      aria-live="polite"
+      className={`cursor-pointer rounded-pill px-3 py-1.5 text-xs font-semibold shadow-clay-sm transition-all disabled:cursor-not-allowed disabled:opacity-45 ${
+        done ? "bg-success-soft text-success-text" : "bg-accent-soft text-accent-text hover:shadow-clay-md"
+      }`}
     >
-      Follow-up
+      {followUp.isPending ? "Mengirim…" : done ? "✓ Terkirim" : "Follow-up"}
     </button>
   );
 }

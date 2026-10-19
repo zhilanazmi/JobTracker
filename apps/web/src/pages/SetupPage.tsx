@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Trash2, Plus, Check } from "lucide-react";
+import { Trash2, Plus, Check, ListChecks, GripVertical } from "lucide-react";
 import { Button, Input, Select, Field, Card, CardTitle, StatusBadge } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useOptions, type OptionItem } from "@/hooks/useDashboard";
@@ -127,8 +127,8 @@ function StatusEditor() {
     mutationFn: async (o: OptionItem) => {
       try {
         return await api.delete(`/api/options/${o.id}`);
-      } catch (e: any) {
-        if (e?.code === "STATUS_IN_USE") {
+      } catch (e: unknown) {
+        if ((e as { code?: string })?.code === "STATUS_IN_USE") {
           // Status terpakai — pindahkan lamaran ke "Wishlist" lalu hapus (prompt §8.3).
           await api.delete(`/api/options/${o.id}?force=true&moveTo=${encodeURIComponent("Wishlist")}`);
           return;
@@ -157,7 +157,9 @@ function StatusEditor() {
 
   return (
     <Card>
-      <CardTitle>⚙️ Daftar Status &amp; Prioritas</CardTitle>
+      <CardTitle className="flex items-center gap-2">
+        <ListChecks size={22} className="text-accent-text" aria-hidden /> Daftar Status &amp; Prioritas
+      </CardTitle>
       <p className="mt-1 text-[13px] text-text-secondary">Status = tahap lamaran (dipakai dropdown di Job Tracker). Edit sesuai kebutuhan.</p>
       <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-[700fr_380fr]">
         <OptionColumn title="Status Lamaran" tipe="status_lamaran" items={items} onPatch={patch.mutate} onAdd={add.mutate} onRemove={remove.mutate} onDragStart={setDragId} onDrop={onDrop} dragId={dragId} />
@@ -196,7 +198,9 @@ function OptionColumn({
             onDrop={(e) => { e.preventDefault(); onDrop(tipe, o.id); }}
             className={`flex h-12 items-center gap-3 rounded-md bg-surface-sunken px-3 shadow-clay-pressed ${dragId === o.id ? "opacity-50" : ""}`}
           >
-            <span aria-hidden className="cursor-grab text-text-muted">⠿</span>
+            <span aria-hidden className="cursor-grab text-text-muted">
+              <GripVertical size={16} />
+            </span>
             <span className="text-xs text-text-muted w-5">{o.urutan}</span>
             <input
               value={o.label}
@@ -213,8 +217,8 @@ function OptionColumn({
             >
               {COLOR_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
-            <button onClick={() => onRemove(o)} aria-label={`Hapus ${o.label}`} className="text-text-muted hover:text-danger-text">
-              <Trash2 size={16} />
+            <button onClick={() => onRemove(o)} aria-label={`Hapus ${o.label}`} className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-text">
+              <Trash2 size={16} aria-hidden />
             </button>
           </li>
         ))}
@@ -234,7 +238,7 @@ function OptionColumn({
           />
           <Button
             size="sm"
-            variant="ghost"
+            variant="secondary"
             disabled={!newLabel.trim()}
             onClick={() => {
               onAdd({ tipe, label: newLabel.trim(), urutan: list.length + 1, warnaToken: "neutral", isTerminal: false });
@@ -269,7 +273,7 @@ function SampleDataCard() {
       </div>
       {confirming && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-          <button className="absolute inset-0 bg-text-primary/30" onClick={() => setConfirming(false)} aria-label="Batal" />
+          <button className="absolute inset-0 bg-text-primary/45" onClick={() => setConfirming(false)} aria-label="Batal" />
           <div className="relative max-w-md rounded-xl bg-surface p-card shadow-clay-lg">
             <h2 id="confirm-title" className="text-xl font-extrabold">Hapus semua data contoh?</h2>
             <p className="mt-2 text-[15px] text-text-secondary">Tindakan ini tidak bisa dibatalkan. Semua baris isSample akan dihapus permanen.</p>

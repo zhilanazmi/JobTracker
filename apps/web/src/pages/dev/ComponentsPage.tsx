@@ -120,7 +120,7 @@ export function ComponentsPage() {
             ["lg 32", "rounded-lg"],
             ["xl 44", "rounded-xl"],
           ].map(([label, cls]) => (
-            <div key={label} className={`h-20 w-20 bg-accent-soft shadow-clay-sm ${cls} flex items-center justify-center text-xs font-semibold text-accent`}>
+            <div key={label} className={`h-20 w-20 bg-accent-soft shadow-clay-sm ${cls} flex items-center justify-center text-xs font-semibold text-accent-text`}>
               {label}
             </div>
           ))}

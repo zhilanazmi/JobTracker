@@ -9,7 +9,7 @@ const TOKEN_CLASS: Record<string, string> = {
   danger: "bg-danger-soft text-danger-text",
   info: "bg-info-soft text-info-text",
   neutral: "bg-neutral-soft text-neutral-text",
-  accent: "bg-accent-soft text-accent",
+  accent: "bg-accent-soft text-accent-text",
 };
 
 const DEFAULT_TOKEN: Record<string, string> = {
@@ -40,7 +40,7 @@ export function StatusBadge({
   const token = warnaToken ?? DEFAULT_TOKEN[label] ?? "neutral";
   return (
     <span
-      className={`inline-flex items-center rounded-pill px-3 py-1 text-xs font-semibold shadow-clay-sm whitespace-nowrap ${TOKEN_CLASS[token] ?? TOKEN_CLASS.neutral}`}
+      className={`inline-flex items-center rounded-md border-2 border-text-primary px-3 py-1 text-xs font-bold shadow-clay-sm whitespace-nowrap ${TOKEN_CLASS[token] ?? TOKEN_CLASS.neutral}`}
     >
       {label}
     </span>

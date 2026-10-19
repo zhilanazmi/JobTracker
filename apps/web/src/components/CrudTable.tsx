@@ -1,6 +1,6 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, ExternalLink } from "lucide-react";
+import { Plus, Trash2, ExternalLink, Pencil, X } from "lucide-react";
 import { Button, Card, Input, Select, Textarea, Field } from "@/components/ui";
 import { api } from "@/lib/api";
 
@@ -49,6 +49,7 @@ export function CrudTable<T extends { id: string }>({
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<T | null>(null);
   const [creating, setCreating] = useState(false);
+  const [deleting, setDeleting] = useState<T | null>(null);
 
   const qs = `q=${encodeURIComponent(q)}&take=100${extraQuery}`;
   const { data, isLoading } = useQuery({
@@ -109,11 +110,15 @@ export function CrudTable<T extends { id: string }>({
                   ))}
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
-                      <button onClick={() => setEditing(row)} aria-label="Edit" className="rounded-md p-1.5 text-text-muted hover:bg-accent-soft hover:text-accent">
-                        ✎
+                      <button onClick={() => setEditing(row)} aria-label="Edit" className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-accent-soft hover:text-accent-text">
+                        <Pencil size={15} aria-hidden />
                       </button>
-                      <button onClick={() => del.mutate(row.id)} aria-label="Hapus" className="rounded-md p-1.5 text-text-muted hover:bg-danger-soft hover:text-danger-text">
-                        <Trash2 size={15} />
+                      <button
+                        onClick={() => setDeleting(row)}
+                        aria-label="Hapus"
+                        className="rounded-md p-1.5 text-text-muted transition-colors hover:bg-danger-soft hover:text-danger-text"
+                      >
+                        <Trash2 size={15} aria-hidden />
                       </button>
                     </div>
                   </td>
@@ -133,6 +138,72 @@ export function CrudTable<T extends { id: string }>({
           onClose={() => { setCreating(false); setEditing(null); }}
         />
       )}
+
+      {deleting && (
+        <CrudDeleteConfirm
+          resource={resource}
+          queryKey={queryKey}
+          target={deleting}
+          onClose={() => setDeleting(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function CrudDeleteConfirm<T extends { id: string }>({
+  resource, queryKey, target, onClose,
+}: {
+  resource: string;
+  queryKey: string;
+  target: T;
+  onClose: () => void;
+}) {
+  const qc = useQueryClient();
+  const del = useMutation({
+    mutationFn: (id: string) => api.delete(`/api/${resource}/${id}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [queryKey] });
+      onClose();
+    },
+  });
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const label =
+    (target as Record<string, unknown>).namaDokumen ??
+    (target as Record<string, unknown>).nama ??
+    (target as Record<string, unknown>).skill ??
+    (target as Record<string, unknown>).role ??
+    "item ini";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="crud-delete-title">
+      <button className="absolute inset-0 bg-text-primary/45" onClick={onClose} aria-label="Tutup" />
+      <Card className="relative w-full max-w-md">
+        <div className="flex items-start justify-between">
+          <h2 id="crud-delete-title" className="text-xl font-extrabold">Hapus item?</h2>
+          <button onClick={onClose} aria-label="Tutup" className="rounded-pill p-1.5 text-text-muted transition-colors hover:bg-surface-sunken">
+            <X size={16} aria-hidden />
+          </button>
+        </div>
+        <p className="mt-3 text-[15px] text-text-secondary">
+          Yakin ingin menghapus <span className="font-semibold text-text-primary">{String(label)}</span>? Tindakan ini tidak bisa dibatalkan.
+        </p>
+        {del.isError && (
+          <p className="mt-3 rounded-md bg-danger-soft px-4 py-2 text-[13px] font-semibold text-danger-text" role="alert">
+            {(del.error as Error).message}
+          </p>
+        )}
+        <div className="mt-5 flex justify-end gap-3">
+          <Button variant="ghost" size="sm" onClick={onClose}>Batal</Button>
+          <Button variant="danger" size="sm" loading={del.isPending} onClick={() => del.mutate(target.id)}>Ya, Hapus</Button>
+        </div>
+      </Card>
     </div>
   );
 }
@@ -152,6 +223,12 @@ function CrudFormModal({
   );
   const isEdit = !!initial.id;
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   const save = useMutation({
     mutationFn: () => {
       const body = Object.fromEntries(Object.entries(form).filter(([, v]) => v !== ""));
@@ -166,10 +243,15 @@ function CrudFormModal({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="crud-form-title">
-      <button className="absolute inset-0 bg-text-primary/30" onClick={onClose} aria-label="Tutup" />
-      <Card className="relative max-h-[90dvh] w-full max-w-lg overflow-y-auto">
-        <h2 id="crud-form-title" className="text-xl font-extrabold">{isEdit ? "Edit" : "Tambah"}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="crud-form-title">
+      <button className="absolute inset-0 bg-text-primary/45" onClick={onClose} aria-label="Tutup" />
+      <Card className="relative max-h-modal w-full max-w-lg overflow-y-auto">
+        <div className="flex items-start justify-between">
+          <h2 id="crud-form-title" className="text-xl font-extrabold">{isEdit ? "Edit Data" : "Tambah Baru"}</h2>
+          <button onClick={onClose} aria-label="Tutup" className="rounded-pill p-1.5 text-text-muted transition-colors hover:bg-surface-sunken">
+            <X size={16} aria-hidden />
+          </button>
+        </div>
         <div className="mt-4 flex flex-col gap-3">
           {fields.map((f) => (
             <Field key={f.name} label={f.label}>
@@ -191,6 +273,11 @@ function CrudFormModal({
             </Field>
           ))}
         </div>
+        {save.isError && (
+          <p className="mt-3 rounded-md bg-danger-soft px-4 py-2 text-[13px] font-semibold text-danger-text" role="alert">
+            {(save.error as Error).message}
+          </p>
+        )}
         <div className="mt-5 flex justify-end gap-3">
           <Button variant="ghost" size="sm" onClick={onClose}>Batal</Button>
           <Button size="sm" loading={save.isPending} onClick={() => save.mutate()}>Simpan</Button>
@@ -203,7 +290,7 @@ function CrudFormModal({
 export function LinkCell({ url, label = "Buka" }: { url: string | null; label?: string }) {
   if (!url) return <span className="text-xs text-text-muted italic">+ Tempel link</span>;
   return (
-    <a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[13px] font-semibold text-accent hover:underline">
+    <a href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[13px] font-semibold text-accent-text hover:underline">
       {label} <ExternalLink size={12} aria-hidden />
     </a>
   );
